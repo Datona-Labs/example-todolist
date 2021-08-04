@@ -12,7 +12,7 @@ For more information see the [online documentation](https://datona-lib.readthedo
 
 [App.js](src/App.js) contains all the interesting datona calls and configuration, including deploying the contract, constructing the vault, reading a directory and reading & writing files.  The private key is hard coded for convenience.  If you change the key you'll need to fund the account.
 
-On first launching the app a basic smart data access contract is deployed to the Rinkeby testnet - see [contracts/TodoListSDAC.sol](contracts/TodoListSDAC.sol).  Once deployed, a vault is created on the cloud based datonavault.com server ready to hold the data.  The contract address and vault information is saved to local storage.  Refreshing the page will reload all todo items from the vault.
+On first launching the app a basic smart data access contract is deployed to the Rinkeby testnet - see [contracts/TodoListSDAC.sol](contract/TodoListSDAC.sol).  Once deployed, a vault is created on the cloud based datonavault.com server ready to hold the data.  The contract address and vault information is saved to local storage.  Refreshing the page will reload all todo items from the vault.
 
 ## Usage
 
