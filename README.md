@@ -1,70 +1,39 @@
-# Getting Started with Create React App
+# Datona Todo List Example
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+Basic example of a DApp using the [Datona platform](https://github.com/Datona-Labs/datona-lib) to provide it's off-chain data.
 
-## Available Scripts
+## What is the Datona Platform
 
-In the project directory, you can run:
+Datona provides a generic private data layer for a decentralised application with user authentication and read/write/append access controls for individual files and folders.  Data is stored in a 'vault' within any compatible 'vault server' and can be read, written and deleted provided the user has the appropriate permissions.  A vault server could be a home server, a cloud vault service, or a company server.  Permissions are granted by a 'smart data access contract' (SDAC) - a smart contract conforming to the [SDAC interface](https://datona-lib.readthedocs.io/en/latest/types.html#sdacinterface).  The SDAC provides a flexible way for DApp developers to create static or dynamic access permissions and explore monetisation of data.    
 
-### `npm start`
+For more information see the [online documentation](https://datona-lib.readthedocs.io/en/latest) or download the [white paper](https://datonalabs.org/documents/WhitePaper.pdf).
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+## The DApp
 
-The page will reload if you make edits.\
-You will also see any lint errors in the console.
+[App.js](src/App.js) contains all the interesting datona calls and configuration, including deploying the contract, constructing the vault, reading a directory and reading & writing files.  The private key is hard coded for convenience.  If you change the key you'll need to fund the account.
 
-### `npm test`
+On first launching the app a basic smart data access contract is deployed to the Rinkeby testnet - see [contracts/TodoListSDAC.sol](contracts/TodoListSDAC.sol).  Once deployed, a vault is created on the cloud based datonavault.com server ready to hold the data.  The contract address and vault information is saved to local storage.  Refreshing the page will reload all todo items from the vault.
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+## Usage
 
-### `npm run build`
+```
+$ git clone git@github.com:Datona-Labs/example-todolist.git
+$ cd example-todolist
+$ npm install
+$ npm start
+```
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+## Community
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+- [Discord](https://discord.gg/sSnvK5C)
+- [Twitter](https://twitter.com/DatonaLabs)
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+## Credits
 
-### `npm run eject`
+Thanks to [nirnejak](https://github.com/nirnejak) for the [To-Do List React App](https://github.com/JitendraNirnejak/todolist.git)
 
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
+## Copyright
 
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+Copyright (c) 2021 [Datona Labs](https://datonalabs.org)
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
-
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
-
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+Released under the [MIT License](LICENSE)
