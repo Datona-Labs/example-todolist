@@ -1,10 +1,6 @@
 // Importing Modules
 import React, { Component } from 'react';
 import datona from 'datona-lib';
-
-// import uuid from 'uuid';  // Not Used Anymore
-
-// Importing React-Router
 import { BrowserRouter as Router, Route } from 'react-router-dom';
 
 // Importing Components
