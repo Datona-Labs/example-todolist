@@ -1,6 +1,6 @@
 # Datona Todo List Example
 
-Basic example of a DApp using the [Datona platform](https://github.com/Datona-Labs/datona-lib) to provide it's off-chain data.
+Basic example of a decentralised Todo List app (DApp) with private off-chain data storage provided by the [Datona platform](https://github.com/Datona-Labs/datona-lib).  It's built using React and uses the Rinkeby (Ethereum) testnet.
 
 ## What is the Datona Platform
 
