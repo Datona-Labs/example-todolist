@@ -16,6 +16,7 @@ class App extends Component {
   contractAddress = window.localStorage.getItem('contractAddress');
 
   state = {
+    contractReady: this.contractAddress !== null,
     vaultReady: window.localStorage.getItem('vaultReady') || false,
     todos: []
   }
@@ -37,6 +38,7 @@ class App extends Component {
       .then( (address) => {
         this.contractAddress = address;
         window.localStorage.setItem('contractAddress', address);
+        this.setState({ contractReady: true });
         return this.constructVault();
       })
       .catch( (error) => {
@@ -60,7 +62,7 @@ class App extends Component {
   initialiseTodoList = () => {
     this.vault.read(todoDirectory)
       .then( (filesAsString) => {
-        const files = filesAsString.split('\n');
+        const files = filesAsString.length === 0 ? [] : filesAsString.split('\n');
         console.log("files: ", files);
         if (datona.assertions.isArray(files) && files.length > 0) {
           for (let i = 0; i < files.length; i++) {
@@ -118,11 +120,26 @@ class App extends Component {
   }
 
   render() {
+    let content;
     if (this.state.error) {
-      return <p>{this.state.error.message ? this.state.error.message : this.state.error}</p>;
+      content = <p className="errorMsg">Error! {this.state.error.message ? this.state.error.message : this.state.error}</p>
     }
-    if (!this.state.vaultReady) {
-      return <p>Initialising Vault...</p>;
+    else if (!this.state.contractReady) {
+      content =
+        <>
+          <p className="statusMsg">Deploying Contract, please wait...</p>
+          <p className="statusMsg">(this may take 30 seconds or so)</p>
+        </>
+    }
+    else if (!this.state.vaultReady) {
+      content = <p className="statusMsg">Constructing Vault, please wait...</p>
+    }
+    else {
+      content =
+        <>
+          <AddTodo addTodo={this.addTodo} />
+          <Todos todos={this.state.todos} toggleComplete={this.toggleComplete} delTodo={this.delTodo}/>
+        </>
     }
     return (
       <Router>
@@ -132,8 +149,7 @@ class App extends Component {
             <br />
             <Route exact path="/" render={props => (
               <React.Fragment>
-                <AddTodo addTodo={this.addTodo} />
-                <Todos todos={this.state.todos} toggleComplete={this.toggleComplete} delTodo={this.delTodo}/>
+                {content}
               </React.Fragment>
             )} />
 

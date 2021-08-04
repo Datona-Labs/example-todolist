@@ -14,6 +14,17 @@ a {
   text-decoration: none;
 }
 
+p.errorMsg {
+  color: #ff0000;
+  font-size: medium;
+  text-align: center;
+}
+
+p.statusMsg {
+  font-size: medium;
+  text-align: center;
+}
+
 .container {
   padding: 0 1rem;
 }
