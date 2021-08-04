@@ -33,6 +33,7 @@ contract TodoListSDAC is SDAC {
     }
 
     function terminate() public override {
+        require(msg.sender == owner, "permission denied");
         terminated = true;
     }
 
