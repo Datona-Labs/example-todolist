@@ -68,7 +68,7 @@ class App extends Component {
           for (let i = 0; i < files.length; i++) {
             this.vault.read(todoDirectory + "/" + files[i])
               .then((content) => {
-                const todoItem = {id: files[i], content: JSON.parse(content)};
+                const todoItem = {id: files[i], content: this.decrypt(content)};
                 if (todoItem.content.state !== "deleted") this.setState({todos: [...this.state.todos, todoItem]});
               })
               .catch( (error) => {
@@ -85,7 +85,7 @@ class App extends Component {
   // Toggle Complete
   toggleComplete = (item) => {
     item.content.state = (item.content.state === "active") ? "completed" : "active";
-    this.vault.write(JSON.stringify(item.content), todoDirectory+"/"+item.id)
+    this.vault.write(this.encrypt(item.content), todoDirectory+"/"+item.id)
       .then( () => {
         this.setState({
           todos: this.state.todos.map(todo => {
@@ -99,7 +99,7 @@ class App extends Component {
   // Delete Todo
   delTodo = (item) => {
     item.content.state = "deleted";
-    this.vault.write(JSON.stringify(item.content), todoDirectory+"/"+item.id)
+    this.vault.write(this.encrypt(item.content), todoDirectory+"/"+item.id)
       .then( () => {
         this.setState({ todos: [...this.state.todos.filter(todo => todo.id !== item.id)] })
       });
@@ -113,10 +113,18 @@ class App extends Component {
         state: "active"
       }
     };
-    this.vault.write(JSON.stringify(newTodoItem.content), todoDirectory+"/"+newTodoItem.id)
+    this.vault.write(this.encrypt(newTodoItem.content), todoDirectory+"/"+newTodoItem.id)
       .then( () => {
         this.setState({ todos: [...this.state.todos, newTodoItem] })
       });
+  }
+
+  encrypt = (obj) => {
+    return myKey.encrypt(myKey.publicKey, JSON.stringify(obj));
+  }
+
+  decrypt = (data) => {
+    return JSON.parse(myKey.decrypt(myKey.publicKey, data));
   }
 
   render() {
