@@ -1,6 +1,6 @@
 # Datona Todo List Example
 
-Basic example of a decentralised Todo List app (DApp) with private off-chain data storage provided by the [Datona platform](https://github.com/Datona-Labs/datona-lib).  It's built using React and uses the Rinkeby (Ethereum) testnet.
+Basic example of a decentralised Todo List app (DApp) with private, encrypted off-chain data storage provided by the [Datona platform](https://github.com/Datona-Labs/datona-lib).  It's built using React and uses the Rinkeby (Ethereum) testnet.
 
 ## What is the Datona Platform
 
@@ -10,7 +10,7 @@ For more information see the [online documentation](https://datona-lib.readthedo
 
 ## The DApp
 
-[App.js](src/App.js) contains all the interesting datona calls and configuration, including deploying the contract, constructing the vault, reading a directory and reading & writing files.  The private key is hard coded for convenience.  If you change the key you'll need to fund the account.
+[App.js](src/App.js) contains all the interesting datona calls and configuration, including deploying the contract, constructing the vault, reading a directory, encrypting/decrypting and reading & writing files.  The private key is hard coded for convenience.  If you change the key you'll need to fund the account.
 
 On first launching the app a basic smart data access contract is deployed to the Rinkeby testnet - see [contracts/TodoListSDAC.sol](contract/TodoListSDAC.sol).  Once deployed, a vault is created on the cloud based datonavault.com server ready to hold the data.  The contract address and vault information is saved to local storage.  Refreshing the page will reload all todo items from the vault.
 
