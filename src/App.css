@@ -25,6 +25,10 @@ p.statusMsg {
   text-align: center;
 }
 
+.code {
+  font-family: monospace;
+}
+
 .container {
   padding: 0 1rem;
 }

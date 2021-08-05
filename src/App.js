@@ -161,7 +161,7 @@ class App extends Component {
               </React.Fragment>
             )} />
 
-            <Route path="/about" component={About} />
+            <Route path="/about" render={() => <About contractAddress={this.contractAddress} myKeyAddress={myKey.address} vaultServer={vaultService.name}/>} />
           </div>
         </div>
       </Router>
@@ -184,7 +184,7 @@ const blockchainGateway = {
 }
 
 const vaultService = {
-  name: "Datona Vault",
+  name: "datonavault.com",
   id: "0x288b32F2653C1d72043d240A7F938a114Ab69584",
   url: {
     scheme: "https",
