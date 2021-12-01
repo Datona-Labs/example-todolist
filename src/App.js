@@ -11,6 +11,8 @@ import About from './components/pages/About';
 
 import './App.css';
 
+// Configuration data, including blockchain provider, contract abi & object code and private key is at the end of this file.
+
 class App extends Component {
 
   contractAddress = window.localStorage.getItem('contractAddress');
@@ -49,37 +51,44 @@ class App extends Component {
   }
 
   deployContract = () => {
+    console.log("deploying contract");
     const contract = new datona.blockchain.Contract(todoListContract.abi);
     contract.deploy(myKey, todoListContract.bytecode, [])
       .then( (address) => {
+        console.log("contract deployed at address", address);
         this.contractAddress = address;
         window.localStorage.setItem('contractAddress', address);
         this.setState({ contractReady: true });
         return this.constructVault();
       })
       .catch( (error) => {
+        console.log("deploy contract", error);
         this.setState({ error: error });
       })
   }
 
   constructVault = () => {
+    console.log("constructing vault");
     this.vault = new datona.vault.RemoteVault(vaultService.url, this.contractAddress, myKey, vaultService.id);
     return this.vault.create()
       .then( () => {
+        console.log("vault constructed");
         window.localStorage.setItem('vaultReady', true);
         this.setState({ vaultReady: true });
       })
       .catch( (error) => {
+        console.log("construct vault", error);
         this.setState({ error: error });
       })
   }
 
   // Read todolist from vault
   initialiseTodoList = () => {
+    console.log("reading todo list from vault");
     this.vault.read(todoDirectory)
       .then( (filesAsString) => {
         const files = filesAsString.length === 0 ? [] : filesAsString.split('\n');
-        console.log("files: ", files);
+        console.log("todo list files: ", files);
         if (datona.assertions.isArray(files) && files.length > 0) {
           for (let i = 0; i < files.length; i++) {
             this.vault.read(todoDirectory + "/" + files[i])
@@ -88,12 +97,13 @@ class App extends Component {
                 if (todoItem.content.state !== "deleted") this.setState({todos: [...this.state.todos, todoItem]});
               })
               .catch( (error) => {
-                console.log(error);
+                console.log("initialise todo list", error);
               })
           }
         }
       })
       .catch( (error) => {
+        console.log("initialise todo list", error);
         this.setState({ error: error });
       })
   }
@@ -219,16 +229,42 @@ const todoListContract = {
 
 const todoDirectory = "0x0000000000000000000000000000000000000001";
 
-datona.blockchain.setProvider(blockchainGateway, "rinkeby");
+const blockchain = {"name":"bubblenet","chainId":45021,"networkId":45021,"comment":"The Bubble main chain","url":"https://ethstats.net/","genesis":{"hash":"0xd4e56740f876aef8c010b86a40d5f56745a118d0906a34e69aec8c0db1cb8fa3","timestamp":null,"gasLimit":5000,"difficulty":17179869184,"nonce":"0x0000000000000042","extraData":"0x11bbe8db4e347b4e8c937c1c8370e4b5ed33adb3db69cbdb7a38e1e50b1b82fa","stateRoot":"0xd7f8974fb5ac78d9ac099b9ad5018bedc2ce0a72dad1827a1709da30580f0544"},"hardforks":[{"name":"chainstart","block":0,"consensus":"pow","finality":null},{"name":"homestead","block":1150000,"consensus":"pow","finality":null},{"name":"dao","block":1920000,"consensus":"pow","finality":null},{"name":"tangerineWhistle","block":2463000,"consensus":"pow","finality":null},{"name":"spuriousDragon","block":2675000,"consensus":"pow","finality":null},{"name":"byzantium","block":4370000,"consensus":"pow","finality":null},{"name":"constantinople","block":7280000,"consensus":"pow","finality":null},{"name":"petersburg","block":7280000,"consensus":"pow","finality":null},{"name":"istanbul","block":9069000,"consensus":"pow","finality":null},{"name":"muirGlacier","block":9200000,"consensus":"pow","finality":null}],"bootstrapNodes":[{"ip":"18.138.108.67","port":30303,"id":"d860a01f9722d78051619d1e2351aba3f43f943f6f00718d1b9baa4101932a1f5011f16bb2b1bb35db20d6fe28fa0bf09636d26a87d31de9ec6203eeedb1f666","location":"ap-southeast-1-001","comment":"bootnode-aws-ap-southeast-1-001"},{"ip":"3.209.45.79","port":30303,"id":"22a8232c3abc76a16ae9d6c3b164f98775fe226f0917b0ca871128a74a8e9630b458460865bab457221f1d448dd9791d24c4e5d88786180ac185df813a68d4de","location":"us-east-1-001","comment":"bootnode-aws-us-east-1-001"},{"ip":"34.255.23.113","port":30303,"id":"ca6de62fce278f96aea6ec5a2daadb877e51651247cb96ee310a318def462913b653963c155a0ef6c7d50048bba6e6cea881130857413d9f50a621546b590758","location":"eu-west-1-001","comment":"bootnode-aws-eu-west-1-001"},{"ip":"35.158.244.151","port":30303,"id":"279944d8dcd428dffaa7436f25ca0ca43ae19e7bcf94a8fb7d1641651f92d121e972ac2e8f381414b80cc8e5555811c2ec6e1a99bb009b3f53c4c69923e11bd8","location":"eu-central-1-001","comment":"bootnode-aws-eu-central-1-001"},{"ip":"52.187.207.27","port":30303,"id":"8499da03c47d637b20eee24eec3c356c9a2e6148d6fe25ca195c7949ab8ec2c03e3556126b0d7ed644675e78c4318b08691b7b57de10e5f0d40d05b09238fa0a","location":"australiaeast-001","comment":"bootnode-azure-australiaeast-001"},{"ip":"191.234.162.198","port":30303,"id":"103858bdb88756c71f15e9b5e09b56dc1be52f0a5021d46301dbbfb7e130029cc9d0d6f73f693bc29b665770fff7da4d34f3c6379fe12721b5d7a0bcb5ca1fc1","location":"brazilsouth-001","comment":"bootnode-azure-brazilsouth-001"},{"ip":"52.231.165.108","port":30303,"id":"715171f50508aba88aecd1250af392a45a330af91d7b90701c436b618c86aaa1589c9184561907bebbb56439b8f8787bc01f49a7c77276c58c1b09822d75e8e8","location":"koreasouth-001","comment":"bootnode-azure-koreasouth-001"},{"ip":"104.42.217.25","port":30303,"id":"5d6d7cd20d6da4bb83a1d28cadb5d409b64edf314c0335df658c1a54e32c7c4a7ab7823d57c39b6a757556e68ff1df17c748b698544a55cb488b52479a92b60f","location":"westus-001","comment":"bootnode-azure-westus-001"}]};
+
+datona.blockchain.setProvider(blockchainGateway, blockchain);
 
 
 //
-// Setup your private key
+// Private key
 //
 
-// Create a new private key (if you don't already have one)
-// You'll need to fund this acount before you can deploy and transact with the contract
-// const myKey = datona.crypto.generateKey();
-
-// ...or setup your private key (if you already have one)
+// This demo uses the hard coded private key below.  This has been pre-funded.
 const myKey = new datona.crypto.Key("052274d012c7926ee3faa7c21e1941bae48cba100b2a6877aa0aebdebd0b24fa");
+
+// If you want to generate a new key then use the following command:
+//   const myKey = datona.crypto.generateKey();
+// You'll need to request funds for this account on the Bubble discord server: https://discord.gg/sSnvK5C
+
+
+
+// 0x015dd68eF0A9FAbA6e7c09DeB0Ab3F5fa90BE2Ce  0x642732E9620e2547411D63228382a35ccF7DdC24  0xA370c9c5804A3fD75CA890F96ee9ab26c10bc41b
+// 0x0bDADF078287E9E24F40efe45cf4B8A435f1C325  0x653361C6F32AD0539e26dFB3fdde29fD908e1Ff3  0xA44B830793B897ddCc085884C3b6c5476cd40072
+// 0x0ffb0088e53c8b72a6b554edd7984b247567f158  0x65a893EC913b13D552e8d089CE56C8BBE4F9E337  0xA45aE41c33284C6AE3614f4adEa3f2744298BC80
+// 0x13a1dED1EE110C53a684b2cf2F8e5665F2d175FB  0x6C8Aa549a41B5D7f2a0570D557e4f9D6dbb7d051  0xAb24e8b2BC039f800C76F5d3DbE4025a0238Af8D
+// 0x15B187e653608f0307187dd7a966F7065a56320d  0x6F4EE83127bC07860656C31806fe41c79067604F  0xb68615A575e5a97fE8a5d28d02455Fe1251A1607
+// 0x162fb119d99e938e1c0d8ebf57fa7b639a3a69bc  0x738af44e7a87e1eff22b5e6aeda24b18165ef448  0xBe7b7FbB925DfA0f34De35DF5A10a12bB3dAc2a5
+// 0x1813596B9A52F04731c19758445865511B55d938  0x793e9e6Ad5Eeb64271c7d82317f1EC2EC8C1c95B  0xbf837aa3c74a318216a543f2c5a41f40348d74ea
+// 0x23d885e3071ac9afade38fd456dba977156d1a8b  0x795DF726012880b548897452Ee77cBD63B118EcF  0xdA364B90dDF50eb1A79d95aE0b927b62E7B5B30e
+// 0x2c554AE5F37E18C3753b2f7c609EEFF29996D200  0x796dc048C7b17fd5F057d70B2298dDd369fbc950  0xda440B668B1F41fE4c242a1526d29D9D834a828A
+// 0x2dfb8150c140b1a30167597863905aab1c2b6765  0x7B0a32cbc5Eeb1381e2Cf614A8041BEe87d6744E  0xe2ee9a260d3b300187ed973df0c2ca4996a5d20a
+// 0x385c4f13fc6fce179cb2c9b29a50bea5356e9459  0x7BA3070101b1FF4E054a68946FEe1EEE811073ed  0xE2Ee9A260D3B300187Ed973dF0c2ca4996A5D20a
+// 0x419A874cD3962b6430dDc1BDc6e24233d9b87EC7  0x7e9ecE0880d3A989435AB0E0B372A4C8F763ae74  0xe6143f1d333a1777b074d92803970fe092bfad07
+// 0x41B2726524852058e1b276CA2605Cf246f7Fa9Ee  0x83A0dfbdA5f133E8678e663eD1F1328E38C6ccE3  0xe81df4a7858019ebf95ef7cfde3d9c5dcbd5aa06
+// 0x42212Ae48926209e856218B4ba4e9dc19b8dB070  0x848632214E6Ae79b86a23c126DF7De792c32FF0f  0xeb77f9ac8f62549f37bef13fe46166120eb3ff17
+// 0x42fc1f8b39d54fb9f717c39a70d13424ba86a60e  0x86A1452321D90fb5CB2440fF4Fa80dfd2f1Ca8B5  0xeD66302acD863753916E94F38cA4eE31C90Bc855
+// 0x59c7069db008249973223c182Ec2306e6fa2b146  0x86af2D72719919776793A12F901AcE2440fd81c1  0xEe3782320AF2eb54b4b0D6f2b45B8A0326e2E409
+// 0x5A8f6EC84DC6115be7925D63729f8Df880B2a4eb  0x89570Ded0270a0C7eD94042025F96E29cE468a19  0xF1842aC515E0fFd5E243682201418D53DbfE0145
+// 0x5e0000f6028033b2c1c6aa7c42271d883cc86029  0x92684AEB62a96c4D1EC4506AE6bA9D5866380F02  0xFbA70A976Ac1F220AB43496fbd0e3aB5Eae3556d
+// 0x6295aC0683741912E09e36a117D9D9853670cc89  0x944c6e9849319cBe5e6D4B2A7A7077525457E59A  0xFDe408B5230BA4a2f3738A892915CBD4a238b715
+// 0x634052e937efc5b925a952df2472f16b3e7ab02f  0x9724F1c59405FBA0Bf55Ca3862fF57db6e915AE0
+// 0x634052E937efC5b925a952Df2472F16B3e7Ab02f  0x972d7d95F15D176CcBCBAe5aaDbcd96A5EFFeE07
