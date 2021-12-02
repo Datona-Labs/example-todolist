@@ -44,6 +44,8 @@ Build and test a smart contract (e.g. in remix) that implements the [SDAC interf
 
 Copy its abi and bytecode for use later.
 
+(For this example you can use the todolist contract from this DApp.  The abi and bytecode can be found in the constant `todoListContract` within `App.js`)
+
 ### Install datona-lib
 ```
 $ npm install datona-lib
@@ -94,7 +96,7 @@ contract.deploy(key, <bytecode>, <constructorParams>)
 ```
 
 ### Construct the Vault
-Note, only the contract owner can construct the vault.  By default the SDAC interface sets this to the address that deployed the smart contract but it can be overidden by your contract implementation (Ultimately the owner is the address returned by the getOwner() method of the smart contract).
+Note, only the contract owner can construct the vault.  By default the SDAC interface sets this to the address that deployed the smart contract but it can be overidden by your contract implementation (Ultimately the owner is the address returned by the `getOwner()` method of the smart contract).
 ```
 const vaultService = {
   name: "datonavault.com",
@@ -118,6 +120,7 @@ vault.create()
 ```
 
 ### Write Some Data
+This example assumes your smart contract implementation permits you (`key.address`) to read and write file 0x01.  
 ```
 const encryptedData = key.encrypt(key.publicKey, "Hello World!");
 
@@ -145,10 +148,14 @@ vault.read(fileId)
 
 ### Delete the Vault
 ```
-contract.terminate(key);
+contract.terminate(key)
+  .then( () => {
+    console.log("contract terminated");
+  })
+  .catch( error => {
+    console.log("failed to terminate contract", error);
+  })
 ```
-
-
 
 ## Community
 
