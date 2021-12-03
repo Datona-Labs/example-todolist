@@ -27,7 +27,6 @@ class App extends Component {
   componentDidMount() {
     // Deploy the contract and construct the vault if this hasn't been done before
     if (!this.state.contractReady) this.deployContract();
-    else if (!this.state.vaultReady) this.constructVault();
     else {
       // Check if contract has been terminated
       const contract = new datona.blockchain.Contract(todoListContract.abi, this.contractAddress);
@@ -38,6 +37,7 @@ class App extends Component {
             window.localStorage.removeItem('vaultReady');
             this.setState({ contractExpired: true });
           }
+          else if (!this.state.vaultReady) this.constructVault();
           else {
             // Read the todolist from the vault
             this.vault = new datona.vault.RemoteVault(vaultService.url, this.contractAddress, myKey, vaultService.id);
@@ -165,11 +165,11 @@ class App extends Component {
           <p className="statusMsg">(this may take 30 seconds or so)</p>
         </>
     }
-    else if (!this.state.vaultReady) {
-      content = <p className="statusMsg">Constructing Vault, please wait...</p>
-    }
     else if (this.state.contractExpired) {
       content = <p className="statusMsg">Todo list has been deleted. Refresh to create a new one</p>
+    }
+    else if (!this.state.vaultReady) {
+      content = <p className="statusMsg">Constructing Vault, please wait...</p>
     }
     else {
       content =
