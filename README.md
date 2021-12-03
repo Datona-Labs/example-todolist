@@ -16,7 +16,7 @@ Example use cases for DApp and Web developers are:
 
 A vault server could be a home server, a cloud vault service, or a company server.  
 
-The main method within a datona smart contract is a `getPermissions(<address> requester, <address> fileId) return <permissions_bit_field>` function, specified in accordance with the [SDAC interface](https://datona-lib.readthedocs.io/en/latest/types.html#sdacinterface);  the file server queries the contract before allowing read or write access to the signatory of a file access request.
+The primary method within a datona smart contract is a `getPermissions(<address> requester, <address> fileId) return <permissions_bit_field>` function, specified in accordance with the [SDAC interface](https://datona-lib.readthedocs.io/en/latest/types.html#sdacinterface);  the file server queries the contract before allowing read or write access to the signatory of a file access request.
 
 For more information see the [online documentation](https://datona-lib.readthedocs.io/en/latest) or download the [white paper](https://datonalabs.org/documents/WhitePaper.pdf).
 
@@ -76,27 +76,18 @@ const key = datona.crypto.generateKey();
 ```
 or
 ```
-const key = new datona.crypto.Key("<private key as hex string");
+const key = new datona.crypto.Key("<private key as hex string>");
 ```
 
 ### Deploy the Contract 
 ```
 const contract = new datona.blockchain.Contract(<abi>);
 
-var contractAddress;
-
-contract.deploy(key, <bytecode>, <constructorParams>)
-  .then( address => {
-    console.log("contract deployed at address", address);
-    contractAddress = address;
-  })
-  .catch( error => {
-    console.log("failed to deploy contract", error);
-  })
+const contractAddress = await contract.deploy(key, <bytecode>, <constructorParams>)'
 ```
 
 ### Construct the Vault
-Note, only the contract owner can construct the vault.  By default the SDAC interface sets this to the address that deployed the smart contract but it can be overidden by your contract implementation (Ultimately the owner is the address returned by the `getOwner()` method of the smart contract).
+Note, only the contract owner can construct the vault.  By default the SDAC interface sets this to the sender that deployed the smart contract but it can be overidden by your contract implementation (Ultimately the owner is the address returned by the `getOwner()` method of the smart contract).
 ```
 const vaultService = {
   name: "datonavault.com",
@@ -110,13 +101,7 @@ const vaultService = {
 
 const vault = new datona.vault.RemoteVault(vaultService.url, contractAddress, key, vaultService.id);
 
-vault.create()
-  .then( () => {
-    console.log("vault constructed");
-  })
-  .catch( error => {
-    console.log("failed to construct vault", error);
-  })
+await vault.create();
 ```
 
 ### Write Some Data
@@ -126,35 +111,18 @@ const encryptedData = key.encrypt(key.publicKey, "Hello World!");
 
 const fileId = "0x0000000000000000000000000000000000000001";
 
-vault.write(encryptedData, fileId)
-  .then( () => {
-    console.log("data written successfully");
-  })
-  .catch( error => {
-    console.log("failed to write data", error);
-  })
+await vault.write(encryptedData, fileId);
 ```
 
 ### Read Some Data
 ```
-vault.read(fileId)
-  .then( data => {
-    console.log(key.decrypt(key.publicKey, data));
-  })
-  .catch( error => {
-    console.log("failed to read data", error);
-  })
+const data = await vault.read(fileId);
+console.log(key.decrypt(key.publicKey, data);
 ```
 
 ### Delete the Vault
 ```
-contract.terminate(key)
-  .then( () => {
-    console.log("contract terminated");
-  })
-  .catch( error => {
-    console.log("failed to terminate contract", error);
-  })
+await contract.terminate(key);
 ```
 
 ## Community
